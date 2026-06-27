@@ -1,0 +1,83 @@
+[
+  {
+    "_id": "a5bfcde0-e234-48df-88ba-13f3cc33ac27",
+    "createdAt": "2026-06-22T14:48:12.797Z",
+    "updatedAt": "2026-06-23T05:10:43.238Z",
+    "fullName": "HR Manager",
+    "email": "hr@rorihotel.com",
+    "password": "$2a$10$0bTKNtLbcevH4HxKgXA22uDmC84a3QImiI6y28th/SpooxIMt/mTm",
+    "role": "hr"
+  },
+  {
+    "_id": "bbce79ea-e94f-421b-a323-ef21c1f8d05c",
+    "createdAt": "2026-06-22T14:48:13.112Z",
+    "updatedAt": "2026-06-23T05:10:43.332Z",
+    "fullName": "Front Office Supervisor",
+    "email": "fo@rorihotel.com",
+    "password": "$2a$10$2o1JYLyBiTj9W35c0MliCeznhF9bkB1LmPdc156rm1v2RF05g82mW",
+    "role": "supervisor_fo"
+  },
+  {
+    "_id": "56b4661c-ef53-49e2-93c0-8dcfbeb17254",
+    "createdAt": "2026-06-22T14:48:13.481Z",
+    "updatedAt": "2026-06-23T05:10:43.425Z",
+    "fullName": "Housekeeping Supervisor",
+    "email": "hk@rorihotel.com",
+    "password": "$2a$10$ebn38whMSG96HL9v.DMjM.pFUWyvxbAtU0IQajGZqBP0QKoV.598.",
+    "role": "supervisor_hk"
+  },
+  {
+    "_id": "17e50c7f-01c3-4660-955f-c305bb900edd",
+    "createdAt": "2026-06-22T14:48:13.800Z",
+    "updatedAt": "2026-06-23T05:10:43.533Z",
+    "fullName": "Kitchen Supervisor",
+    "email": "kt@rorihotel.com",
+    "password": "$2a$10$Px1i/dXoibKoAEUea68IyeA4h3g1fF/Pyf3caLugAncJzjmlmiaC.",
+    "role": "supervisor_kt"
+  },
+  {
+    "_id": "89a670f0-3fb9-4236-86e7-2931aa4381c9",
+    "createdAt": "2026-06-22T14:48:14.107Z",
+    "updatedAt": "2026-06-23T05:10:43.621Z",
+    "fullName": "F&B Supervisor",
+    "email": "fb@rorihotel.com",
+    "password": "$2a$10$JoXoIIsDCAtBEst0RLKU0.BrOjDyHzvA.KerByiKtHv0CYBoZj4hO",
+    "role": "supervisor_fb"
+  },
+  {
+    "_id": "5796bae6-106b-42a8-9f11-8515547edbaf",
+    "createdAt": "2026-06-22T14:52:36.351Z",
+    "updatedAt": "2026-06-22T14:52:36.351Z",
+    "fullName": "test 11",
+    "email": "ssisay@gmail.com",
+    "password": "$2b$10$5byfgat0NVCIuyCX03h8Cum9BaAj1WPSJ9KGbnpw.9fnYyJ7PdGcm",
+    "role": "student"
+  },
+  {
+    "_id": "15df3edf-5b3d-4d8d-970d-22152eff3297",
+    "createdAt": "2026-06-22T16:41:18.680Z",
+    "updatedAt": "2026-06-22T16:41:18.680Z",
+    "fullName": "test 11",
+    "email": "test11@gmail.com",
+    "password": "$2b$10$Vtrz9JcN16E3nNr4OkNljOQIty0ehdTfbJUQJKe/AVFGttVV77HUC",
+    "role": "student"
+  },
+  {
+    "_id": "49239a55-d3ff-4217-a507-a6e2d460f981",
+    "createdAt": "2026-06-22T17:19:37.670Z",
+    "updatedAt": "2026-06-22T17:41:28.992Z",
+    "fullName": "fish test ",
+    "email": "fish@gmail.com",
+    "password": "$2b$10$7q5dVrdQpHUjpWxkZ8NUf..GcYRW06RdsZZZYJ.agqRSr5UfpTdfm",
+    "role": "student"
+  },
+  {
+    "_id": "e17fe156-f941-4a5b-84aa-692ce3166124",
+    "createdAt": "2026-06-23T04:52:46.437Z",
+    "updatedAt": "2026-06-23T04:52:46.437Z",
+    "fullName": "merry test",
+    "email": "mery@gmail.com",
+    "password": "$2a$10$3qz7Hk0.KVTaSLBGUpY5WePeQH5xxk9KP9TvLh/HaIYVApAoeP.TC",
+    "role": "student"
+  }
+]

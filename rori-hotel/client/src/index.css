@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+@theme {
+  --color-warm-beige: #F5F0E8;
+  --color-deep-beige: #E8DDD0;
+  --color-charcoal: #2C2C2C;
+  --color-charcoal-light: #4A4A4A;
+  --color-gold: #C9A84C;
+  --color-gold-light: #E8C97A;
+}
+
+/* Assign elegant serif serif-style Playfair Display typography to all main headings for high quality editorial presence */
+h1, h2, h3 {
+  font-family: 'Playfair Display', serif; /* Apply main font family and fallback on system serif representation styles */
+}
+
+/* Set up standard web legible clean sans-serif Inter style font-family across the entire application body structure */
+body {
+  font-family: 'Inter', sans-serif; /* Set primary text font-family with default sans-serif support rules */
+}
+
+/* CSS transition class applied initially on fade animated cards awaiting scroll-into view browser intersections */
+.reveal {
+  opacity: 0; /* Set complete transparency on initial load frames */
+  transform: translateY(28px); /* Translate elements downwards slightly to simulate beautiful smooth vertical rises triggers */
+  transition: opacity 0.7s ease, transform 0.7s ease; /* Interpolate visual parameters cleanly over 0.7 seconds */
+}
+
+/* CSS state active class appended by IntersectionObservers to animate items elegantly when scrolled visible */
+.revealed {
+  opacity: 1; /* Make the elements completely visible to user views */
+  transform: translateY(0); /* Restore absolute standard positions boundaries */
+}
+
+/* Scroll snap viewport container wrapper styled specifically to orchestrate full screen background photo scroll experiences */
+.snap-container {
+  height: 100vh; /* Stretch container height to match full browser viewport metrics */
+  overflow-y: scroll; /* Force vertical scrollings while maintaining responsive bars boundaries */
+  scroll-snap-type: y mandatory; /* Set strict y axis mandatory slider navigation snap locks */
+}
+
+/* Section elements target snaps inside parent viewport containers sliding seamlessly on each scrolling segment */
+.snap-slide {
+  height: 100vh; /* Match full screen height on individual slides */
+  scroll-snap-align: start; /* Configure perfect slider section alignment locks to begin strictly from the top index margins */
+}

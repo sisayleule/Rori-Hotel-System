@@ -1,0 +1,50 @@
+[
+  {
+    "_id": "df92df6e-6b90-4cdd-b9d4-4e9f6eaaa828",
+    "createdAt": "2026-06-22T17:01:41.672Z",
+    "updatedAt": "2026-06-22T17:01:41.672Z",
+    "senderId": "15df3edf-5b3d-4d8d-970d-22152eff3297",
+    "receiverId": "a5bfcde0-e234-48df-88ba-13f3cc33ac27",
+    "body": "hi"
+  },
+  {
+    "_id": "6de72bdf-5b5c-4730-982e-7a36fb4f82e5",
+    "createdAt": "2026-06-22T17:07:28.893Z",
+    "updatedAt": "2026-06-22T17:07:28.893Z",
+    "senderId": "a5bfcde0-e234-48df-88ba-13f3cc33ac27",
+    "receiverId": "15df3edf-5b3d-4d8d-970d-22152eff3297",
+    "body": "hi"
+  },
+  {
+    "_id": "651ba94e-a2b0-4421-9393-299e466b0c4e",
+    "createdAt": "2026-06-22T17:36:44.824Z",
+    "updatedAt": "2026-06-22T17:36:44.824Z",
+    "senderId": "49239a55-d3ff-4217-a507-a6e2d460f981",
+    "receiverId": "a5bfcde0-e234-48df-88ba-13f3cc33ac27",
+    "body": "hi"
+  },
+  {
+    "_id": "af481eee-3d66-420e-99e3-98cea1a51c21",
+    "createdAt": "2026-06-23T04:34:00.979Z",
+    "updatedAt": "2026-06-23T04:34:00.979Z",
+    "senderId": "a5bfcde0-e234-48df-88ba-13f3cc33ac27",
+    "receiverId": "15df3edf-5b3d-4d8d-970d-22152eff3297",
+    "body": "it was't"
+  },
+  {
+    "_id": "77eaa539-13f5-4dd5-99cd-9877d8cda811",
+    "createdAt": "2026-06-23T04:56:21.453Z",
+    "updatedAt": "2026-06-23T04:56:21.453Z",
+    "senderId": "e17fe156-f941-4a5b-84aa-692ce3166124",
+    "receiverId": "a5bfcde0-e234-48df-88ba-13f3cc33ac27",
+    "body": "jo"
+  },
+  {
+    "_id": "19d37a3b-9769-4562-b0a8-0cf8af5513e7",
+    "createdAt": "2026-06-23T05:03:07.150Z",
+    "updatedAt": "2026-06-23T05:03:07.151Z",
+    "senderId": "e17fe156-f941-4a5b-84aa-692ce3166124",
+    "receiverId": "a5bfcde0-e234-48df-88ba-13f3cc33ac27",
+    "body": "jh"
+  }
+]

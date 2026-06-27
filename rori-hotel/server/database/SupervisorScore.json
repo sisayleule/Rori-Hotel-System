@@ -1,0 +1,13 @@
+[
+  {
+    "_id": "39ada34e-b2f0-4846-95dd-7576426ae7ee",
+    "createdAt": "2026-06-22T17:09:13.490Z",
+    "updatedAt": "2026-06-22T17:09:13.490Z",
+    "studentId": "757cebdc-f525-4e6b-b104-a5facd380c9e",
+    "supervisorId": "56b4661c-ef53-49e2-93c0-8dcfbeb17254",
+    "department": "Housekeeping",
+    "score": 80,
+    "comments": "it was normal\n",
+    "isSubmitted": true
+  }
+]

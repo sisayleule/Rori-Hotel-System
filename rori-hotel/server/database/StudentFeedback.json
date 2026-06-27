@@ -1,0 +1,29 @@
+[
+  {
+    "_id": "3533f9a7-67aa-43a3-89c0-a3d9d522b806",
+    "createdAt": "2026-06-22T17:02:08.179Z",
+    "updatedAt": "2026-06-22T17:02:08.179Z",
+    "studentId": "757cebdc-f525-4e6b-b104-a5facd380c9e",
+    "targetDepartment": "Housekeeping",
+    "feedbackType": "complaint",
+    "message": "it was"
+  },
+  {
+    "_id": "535fc7e6-8eb9-4cd6-9c34-34284f8fd5f7",
+    "createdAt": "2026-06-22T17:37:07.328Z",
+    "updatedAt": "2026-06-22T17:37:07.332Z",
+    "studentId": "8c67a1c9-eb2c-4462-97a8-98d76214647f",
+    "targetDepartment": "Front Office",
+    "feedbackType": "recommendation",
+    "message": "fix it"
+  },
+  {
+    "_id": "6a845c63-1ecc-4128-aa25-248bc80a1581",
+    "createdAt": "2026-06-22T17:49:30.972Z",
+    "updatedAt": "2026-06-22T17:49:30.975Z",
+    "studentId": "8c67a1c9-eb2c-4462-97a8-98d76214647f",
+    "targetDepartment": "",
+    "feedbackType": "complaint",
+    "message": "it was nice time but improve it"
+  }
+]

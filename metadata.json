@@ -1,0 +1,6 @@
+{
+  "name": "Rori Hotel Internship Management System",
+  "description": "Backend API and student internship portal for Rori Hotel.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

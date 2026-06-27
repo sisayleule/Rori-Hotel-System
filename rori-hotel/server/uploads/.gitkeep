@@ -1,0 +1,2 @@
+# Keep uploads folder tracked by git.
+# Do not store real files inside git versions controls repositories.

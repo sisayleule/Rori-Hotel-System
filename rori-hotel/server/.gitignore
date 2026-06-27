@@ -1,0 +1,8 @@
+# Ignore the entire node_modules directories to omit third party packages.
+node_modules
+# Ignore the environment configuration file holding server secret values.
+.env
+# Ignore any student files uploaded into the server storage area.
+uploads/*
+# Do not ignore the tracking helper gitkeep file inside student uploads.
+!uploads/.gitkeep

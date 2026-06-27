@@ -1,0 +1,30 @@
+[
+  {
+    "_id": "13a0facf-dd37-4f80-8a3f-27a663989c5e",
+    "createdAt": "2026-06-22T14:48:14.112Z",
+    "updatedAt": "2026-06-22T14:48:14.112Z",
+    "department": "Front Office",
+    "token": "c135476c-aad8-456a-b692-e35cf6fa3b53"
+  },
+  {
+    "_id": "169bc99d-b120-4950-b1e0-ef9f31f960c8",
+    "createdAt": "2026-06-22T14:48:14.119Z",
+    "updatedAt": "2026-06-22T14:48:14.119Z",
+    "department": "Housekeeping",
+    "token": "a44fa602-eb13-4dbc-a7bc-93e79f1844e1"
+  },
+  {
+    "_id": "6f808a5e-2517-4901-b7fe-1798cb034dfc",
+    "createdAt": "2026-06-22T14:48:14.126Z",
+    "updatedAt": "2026-06-22T14:48:14.127Z",
+    "department": "Kitchen",
+    "token": "7d9a0254-012d-41c9-8d92-2479aeefd2e9"
+  },
+  {
+    "_id": "32099e20-7b6f-4d1f-974e-a894e3382826",
+    "createdAt": "2026-06-22T14:48:14.137Z",
+    "updatedAt": "2026-06-22T14:48:14.137Z",
+    "department": "F&B Service",
+    "token": "bcf93a0c-5203-4698-91b6-97cc19a744af"
+  }
+]
