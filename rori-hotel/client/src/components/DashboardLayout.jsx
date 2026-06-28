@@ -9,12 +9,15 @@ import Sidebar from './Sidebar'; // Resolve the sidebar navigation component.
 // Import Axios preconfigured network client.
 import api from '../utils/api'; // Load unified client-side network querying driver instances.
 // Import lucide-react icons for visual representation
-import { Bell, Settings, X, Shield, Mail, User, Lock, Upload, MessageSquare, Check, Sparkles } from 'lucide-react';
+import { Bell, Settings, X, Shield, Mail, User, Lock, Upload, MessageSquare, Check, Sparkles, Menu } from 'lucide-react';
 
 // Create a functional component called DashboardLayout representing the dashboard skeleton.
 const DashboardLayout = ({ children, role, pageTitle }) => {
   const { user, logout, updateUser } = useAuth(); // Resolve context parameters.
   const navigate = useNavigate(); // Resolve useNavigate router capabilities.
+
+  // Mobile menu state
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Notifications state
   const [notifications, setNotifications] = useState([]);
@@ -143,20 +146,37 @@ const DashboardLayout = ({ children, role, pageTitle }) => {
   return (
     <div className="flex min-h-screen bg-[#faf8f5] overflow-hidden w-full relative">
       {/* Sidebar navigation deck passing role and active user information */}
-      <Sidebar role={role} user={user} />
+      <Sidebar 
+        role={role} 
+        user={user} 
+        isMobileMenuOpen={isMobileMenuOpen}
+        setIsMobileMenuOpen={setIsMobileMenuOpen}
+      />
       
       {/* Main viewport slot containing top action bars and dynamic content views */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden w-full">
         
         {/* Top dashboard action bar for headings and session controls */}
-        <div className="bg-white border-b border-gray-200 px-6 py-3.5 flex items-center justify-between shadow-xs select-none">
-          {/* Centered left side heading displaying the page title */}
-          <h1 className="text-lg font-serif font-black text-[#1a202c] tracking-tight">
-            {pageTitle}
-          </h1>
+        <div className="bg-white border-b border-gray-200 px-3 sm:px-4 md:px-6 py-3 sm:py-3.5 flex items-center justify-between shadow-xs select-none">
+          
+          {/* Left side with hamburger menu and title */}
+          <div className="flex items-center gap-3">
+            {/* Hamburger menu button - only visible on mobile */}
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="lg:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all"
+            >
+              <Menu size={20} />
+            </button>
+            
+            {/* Page title - hidden on very small screens, visible on sm and up */}
+            <h1 className="text-base sm:text-lg font-serif font-black text-[#1a202c] tracking-tight truncate">
+              {pageTitle}
+            </h1>
+          </div>
           
           {/* Right aligned session parameters containing identification labels, settings and bells */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             
             {/* Live interactive notification bell */}
             <div className="relative">
@@ -175,7 +195,7 @@ const DashboardLayout = ({ children, role, pageTitle }) => {
 
               {/* Notifications Dropdown Drawer */}
               {showNotifications && (
-                <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 rounded-xl shadow-lg z-50 overflow-hidden flex flex-col max-h-96">
+                <div className="absolute right-0 mt-2 w-[90vw] sm:w-80 bg-white border border-gray-200 rounded-xl shadow-lg z-50 overflow-hidden flex flex-col max-h-96">
                   <div className="px-4 py-2.5 border-b border-gray-150 flex items-center justify-between bg-gray-50/50">
                     <span className="text-xs font-serif font-black text-gray-800">In-System Notifications</span>
                     {unreadCount > 0 && (
@@ -224,27 +244,28 @@ const DashboardLayout = ({ children, role, pageTitle }) => {
               <Settings size={18} />
             </button>
 
-            {/* Divider line */}
-            <div className="w-px h-4 bg-gray-200"></div>
+            {/* Divider line - hidden on mobile */}
+            <div className="hidden sm:block w-px h-4 bg-gray-200"></div>
 
-            {/* Show full name of current logged-in user inside platform layout */}
-            <span className="text-xs font-bold text-gray-850 font-sans tracking-wide">
+            {/* Show full name of current logged-in user inside platform layout - hidden on mobile */}
+            <span className="hidden md:block text-xs font-bold text-gray-850 font-sans tracking-wide truncate max-w-[120px] lg:max-w-none">
               {user && user.fullName ? user.fullName : "User Profile"}
             </span>
             
-            {/* Action button triggering session termination */}
+            {/* Action button triggering session termination - text hidden on mobile */}
             <button
               onClick={handleLogout}
-              className="text-xs text-red-600 hover:text-white bg-red-50 hover:bg-red-600 border border-red-150 rounded px-3 py-1.5 font-bold uppercase tracking-wider transition-all duration-350 cursor-pointer shadow-3xs"
+              className="text-xs text-red-600 hover:text-white bg-red-50 hover:bg-red-600 border border-red-150 rounded px-2 sm:px-3 py-1.5 font-bold uppercase tracking-wider transition-all duration-350 cursor-pointer shadow-3xs"
             >
-              Log Out
+              <span className="hidden sm:inline">Log Out</span>
+              <span className="sm:hidden">Exit</span>
             </button>
             
           </div>
         </div>
         
         {/* Scrollable children body displaying actual pages nested subviews */}
-        <div className="flex-1 overflow-y-auto p-6 md:p-10">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 lg:p-10">
           {children}
         </div>
       </div>

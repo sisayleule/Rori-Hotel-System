@@ -3,9 +3,11 @@
 import React from 'react'; // Import React standard engine libraries.
 // Import NavLink from react-router-dom which automatically adds an active class when URL matches.
 import { NavLink } from 'react-router-dom'; // Load NavLink elements from routing packages.
+// Import X icon for mobile close button
+import { X } from 'lucide-react'; // Load close icon.
 
-// Create a functional component called Sidebar accepting role and user props.
-const Sidebar = ({ role, user }) => {
+// Create a functional component called Sidebar accepting role, user, and mobile props.
+const Sidebar = ({ role, user, isMobileMenuOpen, setIsMobileMenuOpen }) => {
   // role is the active string code representing authorization tier permission levels.
   // user is the active nested structure containing current account profiles.
 
@@ -67,8 +69,37 @@ const Sidebar = ({ role, user }) => {
 
   // Render sidebar layout tags structures.
   return (
-    // Outermost sidebar div fixed on left margin with charcoal styling
-    <div className="w-[240px] min-h-screen bg-[#12110e] flex flex-col flex-shrink-0 border-r border-white/5 select-none font-sans">
+    <>
+      {/* Mobile overlay backdrop - only visible when menu is open */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+      
+      {/* Sidebar - slides in on mobile, always visible on desktop */}
+      <div className={`
+        fixed lg:relative
+        w-[280px] lg:w-[240px]
+        min-h-screen
+        bg-[#12110e]
+        flex flex-col
+        flex-shrink-0
+        border-r border-white/5
+        select-none font-sans
+        z-50
+        transform transition-transform duration-300 ease-in-out
+        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
+        
+        {/* Mobile close button - only visible on mobile */}
+        <button
+          onClick={() => setIsMobileMenuOpen(false)}
+          className="lg:hidden absolute top-4 right-4 text-white/60 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all"
+        >
+          <X size={20} />
+        </button>
       
       {/* Top logo branding wrapper component with subtle border dividers */}
       <div className="p-5 border-b border-white/10 flex items-center gap-3">
@@ -169,6 +200,7 @@ const Sidebar = ({ role, user }) => {
       </div>
       
     </div>
+    </>
   );
 };
 
