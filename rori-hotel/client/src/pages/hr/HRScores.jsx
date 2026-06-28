@@ -26,6 +26,8 @@ const HRScores = () => {
   const [loadingScores, setLoadingScores] = useState(false); // Default false.
   // State monitoring background publishing operations.
   const [submittingResult, setSubmittingResult] = useState(false); // Disable form submittals during writes.
+  // State monitoring certificate regeneration operations.
+  const [regeneratingCert, setRegeneratingCert] = useState(false); // Disable regenerate button during API call.
   // String state containing backend transaction error descriptions.
   const [error, setError] = useState(''); // Diagnostic error alert flag.
   // String state maintaining successful transaction alerts.
@@ -173,6 +175,32 @@ const HRScores = () => {
     } finally {
       // Toggle off active sending operations.
       setSubmittingResult(false); // Enable interactive widgets.
+    }
+  };
+
+  // Declare asynchronous certificate regeneration handler.
+  const handleRegenerateCertificate = async () => {
+    // Wrap API call in try-catch for error handling.
+    try {
+      // Clear previous alerts.
+      setError(''); // Clear error.
+      setSuccess(''); // Clear success.
+      // Set regenerating state to disable button.
+      setRegeneratingCert(true); // Disable button.
+      // Call regenerate certificate API endpoint.
+      await api.post(`/results/${selectedStudentId}/regenerate-certificate`);
+      // Show success message.
+      setSuccess('Certificate regenerated successfully! Student can now download it.'); // Success alert.
+    } catch (err) {
+      // Extract error message from response.
+      const alertMsg = err.response && err.response.data && err.response.data.message
+        ? err.response.data.message
+        : 'Failed to regenerate certificate'; // Fallback text.
+      // Set error state.
+      setError(alertMsg); // Error alert.
+    } finally {
+      // Re-enable button.
+      setRegeneratingCert(false); // Enable button.
     }
   };
 
@@ -349,15 +377,35 @@ const HRScores = () => {
                         // READ ONLY: Render published summary block layout.
                         <div className="flex flex-col gap-6 border-t border-gray-150 pt-6">
                           {/* Success publication check status labels */}
-                          <div className="flex items-center gap-2">
-                            {/* Checkmark circle graphic vectors */}
-                            <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center shrink-0">
-                              <span className="text-white text-xs font-bold">✓</span>
+                          <div className="flex items-center gap-2 justify-between">
+                            <div className="flex items-center gap-2">
+                              {/* Checkmark circle graphic vectors */}
+                              <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center shrink-0">
+                                <span className="text-white text-xs font-bold">✓</span>
+                              </div>
+                              {/* Publication validation notice */}
+                              <span className="text-sm font-bold text-green-600 uppercase tracking-wider select-none">
+                                Final Result Published & Shared with Student
+                              </span>
                             </div>
-                            {/* Publication validation notice */}
-                            <span className="text-sm font-bold text-green-600 uppercase tracking-wider select-none">
-                              Final Result Published & Shared with Student
-                            </span>
+                            {/* Regenerate Certificate Button */}
+                            <button
+                              onClick={handleRegenerateCertificate}
+                              disabled={regeneratingCert}
+                              className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold text-xs uppercase tracking-wider px-4 py-2 rounded-lg transition-colors border-0 cursor-pointer shadow-sm flex items-center gap-2"
+                            >
+                              {regeneratingCert ? (
+                                <>
+                                  <span className="animate-spin">⟳</span>
+                                  <span>Regenerating...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <span>🔄</span>
+                                  <span>Regenerate Certificate</span>
+                                </>
+                              )}
+                            </button>
                           </div>
 
                           {/* Render compiled comments overview log sheets */}
