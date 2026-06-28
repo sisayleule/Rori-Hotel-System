@@ -15,15 +15,15 @@ const mongoose = require('mongoose'); // Load real mongoose library for MongoDB 
 // Connect to MongoDB Atlas using connection string from environment variable.
 const connectDB = async () => { // Define async database connection function.
   try { // Start error handling block.
-    // Connect to MongoDB using local database - temporarily hardcoded to bypass dotenvx caching.
-    const mongoUri = 'mongodb://localhost:27017/rori-hotel'; // Use local MongoDB for development.
+    // Connect to MongoDB using environment variable - works for both local development and production deployment.
+    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/rori-hotel'; // Use env variable with local fallback.
     await mongoose.connect(mongoUri); // Connect to database.
     console.log('Connected to MongoDB successfully'); // Log success message.
     // Call seedData after successful connection to create default users.
     await seedData(); // Run database seeding subroutine.
   } catch (error) { // Catch connection errors.
     console.error('MongoDB connection error:', error.message); // Log error message.
-    console.error('Make sure MongoDB is running locally on port 27017'); // Log helpful message.
+    console.error('Full error:', error); // Log full error details for debugging.
     process.exit(1); // Exit process with error code if database connection fails.
   } // Close try-catch block.
 }; // Close connectDB function.
@@ -137,10 +137,10 @@ app.use('/api/journal', journalRoutes); // Mount journal router for journal entr
 // Register the results routing engine on /api/results for certificate downloads and regeneration.
 app.use('/api/results', resultsRoutes); // Mount results router for certificate access endpoints.
 
-// Determine if we are running in production
+// Determine if we are running in production - backend runs on Render, frontend on Vercel (separate deployments).
 const isProduction = process.env.NODE_ENV === 'production';
 
-// Serve student uploads folder as static
+// Serve student uploads folder as static - needed for internship letter downloads.
 app.use('/uploads', express.static(path.resolve(__dirname, 'uploads')));
 
 // Create certificates directory if it doesn't exist and serve as static folder for certificate access.
@@ -151,27 +151,18 @@ if (!fs.existsSync(certificatesPath)) { // Check if certificates directory exist
 } // Close directory check.
 app.use('/certificates', express.static(certificatesPath)); // Serve certificates folder as static for direct URL access.
 
-// In production, serve the built Vite client files
-if (isProduction) {
-  const distPath = path.resolve(__dirname, '../client/dist');
-  app.use(express.static(distPath));
-  
-  // Dynamic catch-all router for SPA pages
-  app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api')) {
-      return next();
-    }
-    res.sendFile(path.resolve(distPath, 'index.html'));
+// Backend only serves API in production - frontend is deployed separately on Vercel.
+// Provide a simple status endpoint to verify backend is running.
+app.get('/', (req, res) => { // Declare status endpoint.
+  res.json({ 
+    message: "Rori Hotel API is running", 
+    status: "ok", 
+    environment: isProduction ? "production" : "development" 
   });
-} else {
-  // Add a simple GET route handler on the root path in dev to check Rori Hotel API status
-  app.get('/', (req, res) => { // Declare default landing endpoint.
-    res.json({ message: "Rori Hotel API is running", status: "ok" });
-  });
-}
+});
 
-// Define the backend to run on port 3000 in production, and port 5000 in dev
-const port = isProduction ? 3000 : 5000;
+// Define the backend to run on environment port with fallback - Render provides dynamic PORT variable.
+const port = process.env.PORT || 5000;
 // Start the express application to listen to server socket requests on the specified port.
 app.listen(port, "0.0.0.0", () => { // Bind server to host network interfaces.
   // Print the required confirmation running log console statement.
