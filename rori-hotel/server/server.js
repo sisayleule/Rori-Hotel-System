@@ -161,6 +161,27 @@ app.get('/', (req, res) => { // Declare status endpoint.
   });
 });
 
+// KEEP-ALIVE MECHANISM - Prevent Render free tier from sleeping after 15 minutes of inactivity.
+// This self-ping keeps the server awake and improves response times by avoiding cold starts.
+if (isProduction) { // Only run keep-alive in production (Render).
+  const https = require('https'); // Import https module for self-ping.
+  const BACKEND_URL = process.env.BACKEND_URL || 'https://rori-hotel-system.onrender.com'; // Backend URL from env.
+  
+  // Ping the backend every 10 minutes (600000ms) to keep it awake.
+  setInterval(() => { // Set up recurring ping timer.
+    const url = `${BACKEND_URL}/`; // Ping the root status endpoint.
+    console.log(`[Keep-Alive] Pinging ${url} to prevent sleep...`); // Log ping attempt.
+    
+    https.get(url, (res) => { // Make GET request to self.
+      console.log(`[Keep-Alive] Ping successful - Status: ${res.statusCode}`); // Log success.
+    }).on('error', (err) => { // Handle ping errors.
+      console.error(`[Keep-Alive] Ping failed:`, err.message); // Log error.
+    }); // Close error handler.
+  }, 10 * 60 * 1000); // Run every 10 minutes (600000ms).
+  
+  console.log('[Keep-Alive] Self-ping mechanism enabled - server will stay awake'); // Log activation.
+} // Close production check.
+
 // Define the backend to run on environment port with fallback - Render provides dynamic PORT variable.
 const port = process.env.PORT || 5000;
 // Start the express application to listen to server socket requests on the specified port.

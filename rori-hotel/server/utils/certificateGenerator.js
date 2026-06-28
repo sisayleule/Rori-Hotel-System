@@ -98,55 +98,89 @@ async function generateCertificate(data) { // Define async function accepting da
     .circle(centerX, 80, 20) // Smaller circle.
     .stroke(); // Apply stroke.
   
-  // HEADER - Elegant hotel branding with decorative elements.
-  // Hotel name with shadow effect for depth
-  doc.fontSize(38) // Set large font size for header.
-    .font('Helvetica-Bold') // Use bold font for prominence.
-    .fillColor(colors.primary) // Use dark charcoal color.
-    .text('RORI HOTEL', 0, 115, { align: 'center', width: pageWidth }); // Draw centered hotel name.
+  // HEADER - Elegant hotel logo and branding with decorative elements.
+  // HOTEL LOGO - Stylized text-based logo design with elegant borders
+  const logoY = 105; // Y position for logo.
+  const logoWidth = 280; // Width of logo box.
+  const logoHeight = 70; // Height of logo box.
+  const logoX = centerX - logoWidth / 2; // Center logo horizontally.
   
-  // Decorative underline beneath hotel name
-  doc.lineWidth(2) // Set line width.
-    .strokeColor(colors.accent) // Use gold color.
-    .moveTo(centerX - 100, 155) // Start 100 points left of center.
-    .lineTo(centerX + 100, 155) // End 100 points right of center.
-    .stroke(); // Draw line.
+  // Draw elegant logo background box with cream color
+  doc.rect(logoX, logoY, logoWidth, logoHeight) // Draw rectangle for logo.
+    .fillColor(colors.cream) // Use warm cream background.
+    .fill(); // Fill the rectangle.
   
-  // Location with elegant styling
-  doc.fontSize(12) // Set font for location.
+  // Draw gold border around logo box
+  doc.lineWidth(3) // Thick border for logo prominence.
+    .strokeColor(colors.accent) // Gold border.
+    .rect(logoX, logoY, logoWidth, logoHeight) // Draw border around logo.
+    .stroke(); // Apply stroke.
+  
+  // Draw inner decorative border
+  doc.lineWidth(1) // Thin line.
+    .strokeColor(colors.accentDark) // Darker gold.
+    .rect(logoX + 6, logoY + 6, logoWidth - 12, logoHeight - 12) // Inner border.
+    .stroke(); // Apply stroke.
+  
+  // Draw "RORI" in large decorative letters
+  doc.fontSize(42) // Very large font for hotel name.
+    .font('Helvetica-Bold') // Bold font for prominence.
+    .fillColor(colors.accent) // Gold color for luxury.
+    .text('RORI', 0, logoY + 12, { align: 'center', width: pageWidth }); // Draw hotel name.
+  
+  // Draw "HOTEL" beneath with elegant styling
+  doc.fontSize(16) // Medium font.
+    .font('Helvetica') // Regular font.
+    .fillColor(colors.primary) // Dark color.
+    .text('H O T E L', 0, logoY + 48, { align: 'center', width: pageWidth, characterSpacing: 4 }); // Draw with letter spacing.
+  
+  // Decorative corner accents on logo box
+  const cornerSize = 12; // Size of corner decorations.
+  // Top-left corner
+  doc.lineWidth(2).strokeColor(colors.accentDark);
+  doc.moveTo(logoX, logoY + cornerSize).lineTo(logoX, logoY).lineTo(logoX + cornerSize, logoY).stroke();
+  // Top-right corner
+  doc.moveTo(logoX + logoWidth - cornerSize, logoY).lineTo(logoX + logoWidth, logoY).lineTo(logoX + logoWidth, logoY + cornerSize).stroke();
+  // Bottom-left corner
+  doc.moveTo(logoX, logoY + logoHeight - cornerSize).lineTo(logoX, logoY + logoHeight).lineTo(logoX + cornerSize, logoY + logoHeight).stroke();
+  // Bottom-right corner
+  doc.moveTo(logoX + logoWidth - cornerSize, logoY + logoHeight).lineTo(logoX + logoWidth, logoY + logoHeight).lineTo(logoX + logoWidth, logoY + logoHeight - cornerSize).stroke();
+  
+  // Location with elegant styling below logo
+  doc.fontSize(11) // Set font for location.
     .font('Helvetica') // Use regular font.
     .fillColor(colors.accent) // Use gold color for location.
-    .text('Hawassa, Ethiopia', 0, 165, { align: 'center', width: pageWidth }); // Draw centered location.
+    .text('Hawassa, Ethiopia', 0, logoY + logoHeight + 10, { align: 'center', width: pageWidth }); // Draw centered location.
   
   // CERTIFICATE TITLE - Elegant typography with decorative elements.
   doc.moveDown(1) // Add vertical spacing.
     .fontSize(28) // Set large font size for title.
     .font('Helvetica-Bold') // Use bold font.
     .fillColor(colors.primary) // Use dark color.
-    .text('Certificate of Completion', 0, 195, { align: 'center', width: pageWidth }); // Draw centered title.
+    .text('Certificate of Completion', 0, 210, { align: 'center', width: pageWidth }); // Draw centered title.
   
   // Subtitle with elegant serif styling
   doc.fontSize(14) // Set medium font.
     .font('Helvetica') // Regular font.
     .fillColor(colors.secondary) // Gray color.
-    .text('Internship Program', 0, 230, { align: 'center', width: pageWidth }); // Draw subtitle.
+    .text('Internship Program', 0, 245, { align: 'center', width: pageWidth }); // Draw subtitle.
   
   // PRESENTATION TEXT - "This certifies that" with elegant spacing.
   doc.moveDown(0.8) // Add spacing.
     .fontSize(11) // Set small font size.
     .font('Helvetica') // Use regular font.
     .fillColor(colors.secondary) // Use gray color.
-    .text('This is to certify that', 0, 255, { align: 'center', width: pageWidth }); // Draw centered text.
+    .text('This is to certify that', 0, 270, { align: 'center', width: pageWidth }); // Draw centered text.
   
   // STUDENT NAME - Most prominent element with gold color and shadow effect.
   doc.moveDown(0.5) // Add small spacing.
     .fontSize(46) // Set very large font for student name.
     .font('Helvetica-Bold') // Use bold font for emphasis.
     .fillColor(colors.accent) // Use gold color for prominence.
-    .text(studentName, 0, 275, { align: 'center', width: pageWidth }); // Draw centered student name in gold.
+    .text(studentName, 0, 290, { align: 'center', width: pageWidth }); // Draw centered student name in gold.
   
   // Elegant ornamental underline beneath name with decorative ends.
-  const nameUnderlineY = 330; // Y position for underline.
+  const nameUnderlineY = 345; // Y position for underline.
   const underlineLength = 250; // Length of main underline.
   // Main underline
   doc.lineWidth(2.5) // Set line width.
@@ -168,12 +202,12 @@ async function generateCertificate(data) { // Define async function accepting da
     .fontSize(11) // Set small font.
     .font('Helvetica') // Regular font.
     .fillColor(colors.secondary) // Gray color.
-    .text(`${universityName}`, 0, 350, { align: 'center', width: pageWidth }); // Draw university name.
+    .text(`${universityName}`, 0, 365, { align: 'center', width: pageWidth }); // Draw university name.
   
   // Student ID on separate line
   doc.fontSize(10) // Smaller font for ID.
     .fillColor(colors.secondary) // Gray color.
-    .text(`Student ID: ${studentIdNumber}`, 0, 365, { align: 'center', width: pageWidth }); // Draw student ID.
+    .text(`Student ID: ${studentIdNumber}`, 0, 380, { align: 'center', width: pageWidth }); // Draw student ID.
   
   // COMPLETION STATEMENT - Professional text block with elegant formatting.
   const completionText = 'has successfully completed the comprehensive internship program at Rori Hotel, demonstrating exceptional dedication, professionalism, and outstanding commitment to excellence in hospitality management and service delivery.'; // Define completion text.
@@ -181,14 +215,14 @@ async function generateCertificate(data) { // Define async function accepting da
     .fontSize(11) // Set readable font size.
     .font('Helvetica') // Regular font.
     .fillColor(colors.primary) // Dark color for readability.
-    .text(completionText, 120, 390, { 
+    .text(completionText, 120, 405, { 
       align: 'center', // Center align.
       width: pageWidth - 240, // Set width with padding.
       lineGap: 5 // Add line spacing for readability.
     }); // Draw completion text.
   
   // PERFORMANCE SECTION - Elegant card design with gold accents.
-  const cardY = 440; // Y position for performance card.
+  const cardY = 455; // Y position for performance card.
   const cardHeight = 85; // Height of performance card.
   
   // Draw elegant background card with cream color
