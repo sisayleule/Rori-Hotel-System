@@ -20,8 +20,7 @@ const Sidebar = ({ role, user }) => {
       { to: '/student/dashboard', label: 'My Application' }, // Map My Application page path.
       // Link 2: Redirection targeting chat inbox message flows with HR.
       { to: '/student/messages', label: 'Messages' }, // Map Messages workspace path.
-      // Link 3: Redirection targeting scan results QR logs.
-      { to: '/student/attendance', label: 'Attendance' }, // Map Attendance tracker path.
+      // REMOVED Link 3: Attendance - attendance system completely removed in Phase 8.
       // Link 4: Redirection targeting official transcripts evaluation outputs.
       { to: '/student/results', label: 'My Results' }, // Map My Results records path.
       // Link 5: Redirection targeting feedback logs and forms.
@@ -41,8 +40,7 @@ const Sidebar = ({ role, user }) => {
       { to: '/hr/applications', label: 'Applications' }, // Map Applications index page path.
       // Link 2: Access direct message portals with students.
       { to: '/hr/messages', label: 'Messages' }, // Map Messages center path.
-      // Link 3: View current student clock-in and QR registries.
-      { to: '/hr/attendance', label: 'Attendance' }, // Map Attendance master lists.
+      // REMOVED Link 3: Attendance - attendance system completely removed in Phase 8.
       // Link 4: Review supervisor score submissions records.
       { to: '/hr/scores', label: 'Scores' }, // Map Scores checklist path.
       // Link 5: Map stats records and application conversion scales.

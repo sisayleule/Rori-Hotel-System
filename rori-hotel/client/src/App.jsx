@@ -9,14 +9,14 @@ import ProtectedRoute from './components/ProtectedRoute'; // Import our secure r
 import Home from './pages/Home'; // Import public Home page view.
 import Register from './pages/Register'; // Import public Student Registration page view.
 import Login from './pages/Login'; // Import public Sign-In page view.
-import Attend from './pages/Attend'; // Import public QR Attendance processing page view.
+// REMOVED Attend import - QR attendance page completely removed in Phase 8.
 import Unauthorized from './pages/Unauthorized'; // Import access restricted response page view.
 import Settings from './pages/Settings'; // Import Settings page for all roles account management.
 
 // Import Student dashboards pages.
 import StudentDashboard from './pages/student/StudentDashboard'; // Import Student Main Dashboard interface.
 import StudentMessages from './pages/student/StudentMessages'; // Import Student Messages system.
-import StudentAttendance from './pages/student/StudentAttendance'; // Import Student personal attendance tracking calendar.
+// REMOVED StudentAttendance import - attendance system completely removed in Phase 8.
 import StudentResults from './pages/student/StudentResults'; // Import Student internship performance grades index.
 import StudentFeedback from './pages/student/StudentFeedback'; // Import Student feedback and reviews submit forms.
 import StudentJournal from './pages/student/StudentJournal'; // Import Student daily journal for documenting internship experiences and reflections.
@@ -26,7 +26,7 @@ import HRDashboard from './pages/hr/HRDashboard'; // Import HR corporate overvie
 import HRApplications from './pages/hr/HRApplications'; // Import HR student applications review grid layout.
 import HRApplicationDetail from './pages/hr/HRApplicationDetail'; // Import HR application document detailed inspector.
 import HRMessages from './pages/hr/HRMessages'; // Import HR notification broadcast and support desk communications.
-import HRAttendance from './pages/hr/HRAttendance'; // Import HR comprehensive student attendance monitoring console.
+// REMOVED HRAttendance import - attendance system completely removed in Phase 8.
 import HRScores from './pages/hr/HRScores'; // Import HR grades registry database page.
 import HRStatistics from './pages/hr/HRStatistics'; // Import HR dynamic analytical statistics charts portal.
 
@@ -44,13 +44,13 @@ function App() { // Begin main App module definition block.
           <Route path="/" element={<Home />} /> { /* Route loading Home page layout, open to all visitors */ }
           <Route path="/register" element={<Register />} /> { /* Route loading Student application registering forms pages */ }
           <Route path="/login" element={<Login />} /> { /* Route loading user session login files */ }
-          <Route path="/attend" element={<Attend />} /> { /* Route loading instant target QR Scanner attendance logging systems */ }
+          { /* REMOVED /attend route - QR attendance system completely removed in Phase 8 */ }
           <Route path="/unauthorized" element={<Unauthorized />} /> { /* Route loading permission fallback screens */ }
 
           { /* Private student role account endpoints secured under Student role guards wrapper. */ }
           <Route path="/student/dashboard" element={<ProtectedRoute allowedRoles={['student']}><StudentDashboard /></ProtectedRoute>} /> { /* Load Student main dashboard panels */ }
           <Route path="/student/messages" element={<ProtectedRoute allowedRoles={['student']}><StudentMessages /></ProtectedRoute>} /> { /* Load Student secure notifications and logs */ }
-          <Route path="/student/attendance" element={<ProtectedRoute allowedRoles={['student']}><StudentAttendance /></ProtectedRoute>} /> { /* Load Student personal site attendance lists */ }
+          { /* REMOVED /student/attendance route - attendance system completely removed in Phase 8 */ }
           <Route path="/student/results" element={<ProtectedRoute allowedRoles={['student']}><StudentResults /></ProtectedRoute>} /> { /* Load Student performance scores view */ }
           <Route path="/student/feedback" element={<ProtectedRoute allowedRoles={['student']}><StudentFeedback /></ProtectedRoute>} /> { /* Load Student comments submit views */ }
           <Route path="/student/journal" element={<ProtectedRoute allowedRoles={['student']}><StudentJournal /></ProtectedRoute>} /> { /* Load Student daily journal for internship documentation */ }
@@ -61,7 +61,7 @@ function App() { // Begin main App module definition block.
           <Route path="/hr/applications" element={<ProtectedRoute allowedRoles={['hr']}><HRApplications /></ProtectedRoute>} /> { /* Load student incoming application review logs list */ }
           <Route path="/hr/applications/:id" element={<ProtectedRoute allowedRoles={['hr']}><HRApplicationDetail /></ProtectedRoute>} /> { /* Load single application specific inspector page */ }
           <Route path="/hr/messages" element={<ProtectedRoute allowedRoles={['hr']}><HRMessages /></ProtectedRoute>} /> { /* Load HR active support threads portal */ }
-          <Route path="/hr/attendance" element={<ProtectedRoute allowedRoles={['hr']}><HRAttendance /></ProtectedRoute>} /> { /* Load student overview daily checks calendars */ }
+          { /* REMOVED /hr/attendance route - attendance system completely removed in Phase 8 */ }
           <Route path="/hr/scores" element={<ProtectedRoute allowedRoles={['hr']}><HRScores /></ProtectedRoute>} /> { /* Load student grades database summary table */ }
           <Route path="/hr/statistics" element={<ProtectedRoute allowedRoles={['hr']}><HRStatistics /></ProtectedRoute>} /> { /* Load visual statistics graphics pages panels */ }
           <Route path="/hr/settings" element={<ProtectedRoute allowedRoles={['hr']}><Settings /></ProtectedRoute>} /> { /* Load HR settings account management page */ }

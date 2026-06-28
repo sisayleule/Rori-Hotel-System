@@ -1,0 +1,57 @@
+# =======================================================================================
+# VERCEL.JSON CONFIGURATION EXPLANATION
+# =======================================================================================
+
+The vercel.json file is CRITICAL for React Router to work correctly on Vercel.
+
+## What It Does:
+
+The configuration tells Vercel to rewrite ALL routes to the root index.html file.
+This allows React Router to handle client-side routing instead of Vercel trying 
+to serve different HTML files for each route.
+
+## Why It's Needed:
+
+Without this file:
+- Direct URL access works: https://your-app.vercel.app/ ✅
+- Navigation within app works: Clicking links works ✅
+- Page refresh BREAKS: Refreshing /student/dashboard gives 404 ❌
+- Direct URL to route BREAKS: https://your-app.vercel.app/student/dashboard gives 404 ❌
+
+With this file:
+- Everything works correctly ✅
+- All routes are handled by React Router ✅
+- Page refreshes work perfectly ✅
+- Direct URLs to any route work ✅
+
+## Configuration Breakdown:
+
+{
+  "rewrites": [                    // Array of rewrite rules
+    {
+      "source": "/(.*)",            // Match ANY route pattern using regex
+      "destination": "/"            // Redirect ALL routes to root index.html
+    }
+  ]
+}
+
+The source pattern "/(.*)" uses regex to match:
+- / (root)
+- /login
+- /student/dashboard
+- /hr/applications
+- ANY other path
+
+All matched routes are internally rewritten to "/" (index.html) so React takes over.
+
+## Important Notes:
+
+1. This file MUST exist before deploying to Vercel
+2. Without it, the app appears broken to users who refresh pages
+3. This is a common issue with Single Page Applications (SPAs) on static hosts
+4. The rewrite happens server-side before React loads
+5. React Router then handles the actual routing client-side
+
+## Do Not Delete This File!
+
+Deleting vercel.json will break all non-root routes when users refresh pages.

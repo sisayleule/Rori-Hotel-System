@@ -43,14 +43,12 @@ const feedbackRoutes = require('./routes/feedback'); // Load student feedback ro
 // APPLICATION ROUTES
 // Import the applications routes configuration module to manage incoming intern submissions.
 const applicationRoutes = require('./routes/applications'); // Load HR applications route.
-// IMPORT ATTENDANCE ROUTER
-const attendanceRoutes = require('./routes/attendance'); // Load HR/student attendance routes.
+// REMOVED ATTENDANCE ROUTER - attendance system completely removed in Phase 8.
 // IMPORT SCORES ROUTER
 const scoreRoutes = require('./routes/scores'); // Load HR/supervisor scores routes.
 // IMPORT STATISTICS ROUTER
 const statisticsRoutes = require('./routes/statistics'); // Load HR statistics routes.
-// IMPORT QR ROUTER
-const qrRoutes = require('./routes/qr'); // Load HR department QR routers.
+// REMOVED QR ROUTER - QR code attendance system completely removed in Phase 8.
 // IMPORT NOTIFICATIONS ROUTER
 const notificationRoutes = require('./routes/notifications'); // Load notification routes.
 // IMPORT USERS SETTINGS ROUTER
@@ -124,14 +122,12 @@ app.use('/api/messages', messageRoutes); // Mount message router.
 app.use('/api/feedback', feedbackRoutes); // Mount feedback router.
 // Register the applications database routing engine middleware on /api/applications.
 app.use('/api/applications', applicationRoutes); // Mount applications router.
-// Register the attendance database routing engine middleware on /api/attendance.
-app.use('/api/attendance', attendanceRoutes); // Mount attendance router.
+// REMOVED ATTENDANCE ROUTES - attendance system completely removed in Phase 8.
 // Register the scores database routing engine middleware on /api/scores.
 app.use('/api/scores', scoreRoutes); // Mount scores router.
 // Register the statistics database routing engine middleware on /api/statistics.
 app.use('/api/statistics', statisticsRoutes); // Mount statistics router.
-// Register the QR code routing engine on /api/qr.
-app.use('/api/qr', qrRoutes); // Mount qr router.
+// REMOVED QR ROUTES - QR code attendance system completely removed in Phase 8.
 // Register the notification routing engine on /api/notifications.
 app.use('/api/notifications', notificationRoutes); // Mount notifications router.
 // Register the users settings routing engine on /api/users for profile, email, password, and preferences management.
