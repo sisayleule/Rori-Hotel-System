@@ -1,12 +1,16 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
-  --color-warm-beige: #F5F0E8;
-  --color-deep-beige: #E8DDD0;
-  --color-charcoal: #2C2C2C;
-  --color-charcoal-light: #4A4A4A;
-  --color-gold: #C9A84C;
-  --color-gold-light: #E8C97A;
+@layer base {
+  :root {
+    --color-warm-beige: #F5F0E8;
+    --color-deep-beige: #E8DDD0;
+    --color-charcoal: #2C2C2C;
+    --color-charcoal-light: #4A4A4A;
+    --color-gold: #C9A84C;
+    --color-gold-light: #E8C97A;
+  }
 }
 
 /* Assign elegant serif serif-style Playfair Display typography to all main headings for high quality editorial presence */
