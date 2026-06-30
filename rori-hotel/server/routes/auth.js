@@ -8,6 +8,7 @@ const bcrypt = require('bcryptjs'); // Require bcryptjs library.
 const jwt = require('jsonwebtoken'); // Require jsonwebtoken library.
 // Import the multer library to handle multi-part form file uploads for student documents.
 const multer = require('multer'); // Require multer library.
+const rateLimit = require('express-rate-limit'); // Require rate limiting for public auth routes.
 // Import our Mongoose model for User accounts to perform query and write operations.
 const User = require('../models/User'); // Load User model.
 // Import our Mongoose model for Student applications to create application data logs.
@@ -18,6 +19,15 @@ const { storage, useCloudinary } = require('../config/cloudinary'); // Load stor
 const { notifyAllWithRole } = require('../utils/notifications'); // Import notification helper.
 // Import the email service functions to send real email notifications to users.
 const { sendWelcomeEmail, sendApprovalEmail, sendRejectionEmail } = require('../utils/emailService'); // Import email notification functions.
+const { getRequiredEnv } = require('../utils/env'); // Load required env helper.
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many authentication attempts. Please try again later.' }
+});
 
 // Configure multer upload middleware with Cloudinary storage and file filtering for security.
 const upload = multer({ // Create multer instance with configuration options.
@@ -67,7 +77,7 @@ const handleUpload = (req, res, next) => { // Define custom middleware function 
 }; // Close handleUpload middleware function.
 
 // Define the registering endpoint POST route at '/register' accepting file attachments with safe error handling.
-router.post('/register', handleUpload, async (req, res) => { // Declaring post route with custom upload handler.
+router.post('/register', authLimiter, handleUpload, async (req, res) => { // Declaring post route with custom upload handler.
   // Implement a safety try-catch block representing robust transaction error handling logic.
   try { // Start handling block.
     console.log('Registration started for email:', req.body.email); // Log registration attempt for debugging.
@@ -222,8 +232,12 @@ router.post('/register', handleUpload, async (req, res) => { // Declaring post r
 
     // Send welcome email to the newly registered student - wrapped in try-catch so email failure never blocks registration.
     try { // Start email sending error handling block.
-      await sendWelcomeEmail(email, fullName); // Call sendWelcomeEmail function with student email and full name.
-      console.log('[Registration] Welcome email sent successfully to:', email); // Log successful email delivery.
+      const emailSent = await sendWelcomeEmail(email, fullName);
+      if (emailSent) {
+        console.log('[Registration] Welcome email sent successfully to:', email);
+      } else {
+        console.warn('[Registration] Welcome email not sent to:', email);
+      }
     } catch (emailErr) { // Catch any email sending errors without crashing registration.
       console.error('[Registration] Failed to send welcome email (non-fatal):', emailErr.message); // Log email error but continue registration process.
     } // Close email error handling block.
@@ -241,19 +255,17 @@ router.post('/register', handleUpload, async (req, res) => { // Declaring post r
     console.error('Error message:', err.message); // Log error message text.
     console.error('Error stack:', err.stack); // Log full stack trace for debugging.
     console.error('Request body keys:', Object.keys(req.body || {})); // Log which fields were in the request.
-    console.error('Request files:', req.files ? req.files.map(f => f.fieldname) : 'none'); // Log which files were uploaded.
+    console.error('Request files:', req.files ? Object.keys(req.files) : 'none'); // Log which files were uploaded.
     console.error('=== END REGISTRATION ERROR ==='); // Log error section footer.
     // Return standard system fault indicator message blocks with error details.
     res.status(500).json({ // Return 500 server error status.
-      message: "something went wrong please try again", // User-friendly error message.
-      error: err.message, // Include actual error message for debugging.
-      details: err.name // Include error type.
+      message: "something went wrong please try again" // User-friendly error message.
     }); // Deliver response details.
   } // Terminate try-catch trap block.
 }); // Close register handler block.
 
 // Define the login verification POST route at '/login' endpoint path.
-router.post('/login', async (req, res) => { // Declaring post route middleware.
+router.post('/login', authLimiter, async (req, res) => { // Declaring post route middleware.
   // Secure route checks inside exception catching blocks.
   try { // Start handling logic.
     // Trace login parameters directly out from request body blocks.
@@ -267,11 +279,12 @@ router.post('/login', async (req, res) => { // Declaring post route middleware.
     }
 
     // Perform database lookups inside users database matching registration logs.
-    const userAccount = await User.findOne({ email: email }); // Fire search query handler.
+    const normalizedEmail = email.toLowerCase().trim(); // Normalize email before lookup.
+    const userAccount = await User.findOne({ email: normalizedEmail }); // Fire search query handler.
     // Assess user record availability presence.
     if (!userAccount) { // Case where matching account is missing.
       // Respond stating user doesn't exist on server directory logs.
-      return res.status(404).json({ message: "no account found with this email" }); // Send 44 error status.
+      return res.status(401).json({ message: "invalid email or password" }); // Send generic authentication error.
     } // End account match conditional checkout.
 
     // Confirm that the userAccount has a password field
@@ -281,14 +294,16 @@ router.post('/login', async (req, res) => { // Declaring post route middleware.
     }
 
     // Log types for diagnostic purposes
-    console.log(`Verifying credentials for ${email}. password type: ${typeof password}, hash type: ${typeof userAccount.password}`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`Verifying credentials for ${normalizedEmail}`);
+    }
 
     // Validate matching decrypted hash password criteria using password evaluation functions.
     const isPasswordValid = await bcrypt.compare(password, userAccount.password); // Run decryption verify check.
     // Abort session if verification matching is flawed.
     if (!isPasswordValid) { // Validation failed.
       // Block entry and output invalid message tags back to application UI.
-      return res.status(401).json({ message: "incorrect password" }); // Send unauthenticated 401 response.
+      return res.status(401).json({ message: "invalid email or password" }); // Send unauthenticated 401 response.
     } // End validation check evaluation state.
     // Set up secure token verification payload containing identifying primary markers.
     const authenticationPayload = { // Construct jwt token metadata mapping values.
@@ -298,7 +313,7 @@ router.post('/login', async (req, res) => { // Declaring post route middleware.
     // Encrypt validation credential packages using standard process secure signature secret key logic.
     const authenticationToken = jwt.sign( // Construct encryption string key credentials.
       authenticationPayload, // Pass identity records.
-      process.env.JWT_SECRET || 'fallback-secret-key-1234', // Access secret variable with standard fallback.
+      getRequiredEnv('JWT_SECRET'), // Access required signing secret.
       { expiresIn: '7d' } // Limit credentials active authorization timespan to 7 days.
     ); // Close verification transaction block.
     // Retain approved connection records and send variables back to user.

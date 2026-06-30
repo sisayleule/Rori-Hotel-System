@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'; // Import React state and li
 // Import the custom DashboardLayout scaffolding wrapper component.
 import DashboardLayout from '../../components/DashboardLayout'; // Fetch common nested dashboard parent layout components.
 // Import the preconfigured Axios network client instance.
-import api from '../../utils/api'; // Load unified client-side network querying driver instances.
+import api, { getApiBaseUrl } from '../../utils/api'; // Load unified client-side network querying driver instances.
 
 // Create the StudentResults functional component.
 const StudentResults = () => { // Begin functional component declaration.
@@ -38,7 +38,7 @@ const StudentResults = () => { // Begin functional component declaration.
   }, []); // Run effect exactly once on mount.
 
   // Define backend URL prefix for certificate download links.
-  const backendBaseUrl = import.meta.env.VITE_API_URL || `${window.location.origin}/api`; // Safely extract API base address.
+  const backendBaseUrl = getApiBaseUrl(); // Safely extract API base address.
 
   // Function to download certificate with authentication token
   const downloadCertificate = async () => { // Define async download function.

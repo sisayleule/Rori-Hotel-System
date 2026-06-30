@@ -5,12 +5,18 @@ require('dotenv').config({ path: path.resolve(__dirname, '.env') }); // Load ser
 require('dotenv').config({ path: path.resolve(process.cwd(), '.env') }); // Load root workspace .env as fallback.
 // Import the seedData function from the utils folder to automatically create default staff accounts and QR tokens.
 const { seedData } = require('./utils/seedData'); // Load seedling helper routines.
+const { validateEnv, shouldSeedDefaultUsers } = require('./utils/env'); // Load environment validation helpers.
 // Import the express framework module so we can build our backend web application server easily.
 const express = require('express'); // Instantiate express library dependency.
 // Import the cross-origin resource sharing (CORS) package to permit safe web clients domain connections.
 const cors = require('cors'); // Load cors module library.
+const helmet = require('helmet'); // Add standard HTTP security headers.
+const morgan = require('morgan'); // Add request logging middleware.
 // Import the real mongoose database connection - connects to MongoDB Atlas cloud database not local mock.
 const mongoose = require('mongoose'); // Load real mongoose library for MongoDB Atlas.
+const fs = require('fs'); // Import fs module to check and create directory.
+
+validateEnv(); // Fail fast when required production configuration is missing.
 
 // Connect to MongoDB Atlas using connection string from environment variable.
 const connectDB = async () => { // Define async database connection function.
@@ -19,8 +25,9 @@ const connectDB = async () => { // Define async database connection function.
     const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/rori-hotel'; // Use env variable with local fallback.
     await mongoose.connect(mongoUri); // Connect to database.
     console.log('Connected to MongoDB successfully'); // Log success message.
-    // Call seedData after successful connection to create default users.
-    await seedData(); // Run database seeding subroutine.
+    if (shouldSeedDefaultUsers()) { // Only seed default users when explicitly enabled.
+      await seedData(); // Run database seeding subroutine.
+    }
   } catch (error) { // Catch connection errors.
     console.error('MongoDB connection error:', error.message); // Log error message.
     console.error('Full error:', error); // Log full error details for debugging.
@@ -57,8 +64,13 @@ const usersRoutes = require('./routes/users'); // Load user settings routes for 
 const journalRoutes = require('./routes/journal'); // Load journal routes for student daily journal entries and HR review.
 // IMPORT RESULTS ROUTER FOR CERTIFICATE DOWNLOADS
 const resultsRoutes = require('./routes/results'); // Load results routes for certificate downloads and regeneration.
+// Determine if we are running in production - backend runs on Render, frontend on Vercel (separate deployments).
+const isProduction = process.env.NODE_ENV === 'production';
 // Instantiate an express application instance which will serve as our primary web routing and middleware engine.
 const app = express(); // Initialize express app instance.
+app.set('trust proxy', 1); // Trust Render/Vercel proxy headers for accurate client IPs.
+app.use(helmet()); // Add standard security headers before route handling.
+app.use(morgan(isProduction ? 'combined' : 'dev')); // Log HTTP requests in a production-safe format.
 
 // Configure CORS options object to allow multiple frontend origins including localhost development servers.
 const corsOptions = { // Define CORS configuration settings object.
@@ -91,23 +103,6 @@ app.use(cors(corsOptions)); // Enable CORS with custom options.
 // Handle preflight OPTIONS requests explicitly for all routes - browsers send OPTIONS before POST/PUT/DELETE.
 app.options('*', cors(corsOptions)); // Enable preflight CORS checks for all endpoints.
 
-// Add backup CORS headers middleware to manually set headers on every response in case cors package misses edge cases.
-app.use((req, res, next) => { // Create custom middleware function to set CORS headers.
-  // Set Access-Control-Allow-Origin header to the requesting origin or default to localhost:3000.
-  res.header('Access-Control-Allow-Origin', req.headers.origin || 'http://localhost:3000'); // Allow origin header.
-  // Allow credentials (cookies, authorization headers) to be included in cross-origin requests.
-  res.header('Access-Control-Allow-Credentials', 'true'); // Allow credentials header.
-  // Specify which HTTP methods are permitted for cross-origin requests.
-  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,PATCH,OPTIONS'); // Allow methods header.
-  // Specify which request headers are allowed in cross-origin requests.
-  res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With,Accept,Origin'); // Allow headers.
-  // Handle preflight OPTIONS requests immediately by returning 200 status without processing further.
-  if (req.method === 'OPTIONS') { // Check if request is preflight OPTIONS.
-    return res.status(200).end(); // End OPTIONS request with success status.
-  } // End OPTIONS check.
-  next(); // Continue to next middleware in the chain.
-}); // Close backup CORS headers middleware.
-
 // Mount the JSON parsing middleware to allow the express server to automatically parse incoming JSON payloads.
 app.use(express.json()); // Enable JSON formats parsing engine.
 // Mount URL encoded body parsers with nested attributes object structures scanning activated.
@@ -137,19 +132,14 @@ app.use('/api/journal', journalRoutes); // Mount journal router for journal entr
 // Register the results routing engine on /api/results for certificate downloads and regeneration.
 app.use('/api/results', resultsRoutes); // Mount results router for certificate access endpoints.
 
-// Determine if we are running in production - backend runs on Render, frontend on Vercel (separate deployments).
-const isProduction = process.env.NODE_ENV === 'production';
-
 // Serve student uploads folder as static - needed for internship letter downloads.
 app.use('/uploads', express.static(path.resolve(__dirname, 'uploads')));
 
 // Create certificates directory if it doesn't exist and serve as static folder for certificate access.
 const certificatesPath = path.join(__dirname, 'uploads', 'certificates'); // Construct path to certificates directory.
-const fs = require('fs'); // Import fs module to check and create directory.
 if (!fs.existsSync(certificatesPath)) { // Check if certificates directory exists.
   fs.mkdirSync(certificatesPath, { recursive: true }); // Create directory recursively if it doesn't exist.
 } // Close directory check.
-app.use('/certificates', express.static(certificatesPath)); // Serve certificates folder as static for direct URL access.
 
 // Backend only serves API in production - frontend is deployed separately on Vercel.
 // Provide a simple status endpoint to verify backend is running.
@@ -158,6 +148,19 @@ app.get('/', (req, res) => { // Declare status endpoint.
     message: "Rori Hotel API is running", 
     status: "ok", 
     environment: isProduction ? "production" : "development" 
+  });
+});
+
+app.get('/health', (req, res) => {
+  const isDatabaseConnected = mongoose.connection.readyState === 1;
+  res.status(isDatabaseConnected ? 200 : 503).json({
+    status: isDatabaseConnected ? 'ok' : 'degraded',
+    database: {
+      connected: isDatabaseConnected,
+      readyState: mongoose.connection.readyState
+    },
+    environment: isProduction ? 'production' : 'development',
+    timestamp: new Date().toISOString()
   });
 });
 
@@ -185,7 +188,34 @@ if (isProduction) { // Only run keep-alive in production (Render).
 // Define the backend to run on environment port with fallback - Render provides dynamic PORT variable.
 const port = process.env.PORT || 5000;
 // Start the express application to listen to server socket requests on the specified port.
-app.listen(port, "0.0.0.0", () => { // Bind server to host network interfaces.
+const server = app.listen(port, "0.0.0.0", () => { // Bind server to host network interfaces.
   // Print the required confirmation running log console statement.
   console.log(`Server running on port ${port} in ${isProduction ? 'production' : 'development'} mode`); // Log running confirmation state indicators.
 }); // Close app connection scope brackets.
+
+app.use((err, req, res, next) => {
+  console.error('Unhandled request error:', err.message);
+  if (res.headersSent) {
+    return next(err);
+  }
+  return res.status(err.status || 500).json({
+    message: isProduction ? 'Internal server error' : err.message
+  });
+});
+
+const shutdown = async (signal) => {
+  console.log(`${signal} received. Closing HTTP server and MongoDB connection...`);
+  server.close(async () => {
+    try {
+      await mongoose.connection.close(false);
+      console.log('MongoDB connection closed');
+      process.exit(0);
+    } catch (error) {
+      console.error('Error during shutdown:', error.message);
+      process.exit(1);
+    }
+  });
+};
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));

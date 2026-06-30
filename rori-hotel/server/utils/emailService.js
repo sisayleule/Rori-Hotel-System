@@ -1,30 +1,47 @@
 // This file implements the complete email notification system using nodemailer and Gmail SMTP for real email delivery.
 // It provides helper functions for sending formatted HTML emails for various internship system events.
 const nodemailer = require('nodemailer'); // Import nodemailer library to enable SMTP email sending capabilities.
+const appUrl = process.env.NODE_ENV === 'production'
+  ? process.env.CLIENT_URL_PROD
+  : process.env.CLIENT_URL || 'http://localhost:3000';
 
-// Create email transporter using Gmail SMTP service with credentials from environment variables.
-const transporter = nodemailer.createTransport({ // Initialize nodemailer transport configuration object.
-  service: 'gmail', // Set email service provider to Gmail SMTP server.
-  auth: { // Define authentication credentials object for SMTP login.
-    user: process.env.EMAIL_USER, // Get Gmail account email address from environment variable EMAIL_USER.
-    pass: process.env.EMAIL_PASS // Get Gmail app-specific password from environment variable EMAIL_PASS.
-  } // Close authentication credentials configuration.
-}); // Close transporter configuration.
+const EMAIL_TIMEOUT_MS = 8000;
 
-// Helper function to send email with error handling that accepts recipient address, email subject, and HTML body content.
-async function sendEmail(toEmail, subject, htmlBody) { // Define async function that sends email and accepts three string parameters.
-  try { // Start try block to catch any errors during email sending process.
-    await transporter.sendMail({ // Call nodemailer sendMail method with email configuration object.
-      from: `"Rori Hotel System" <${process.env.EMAIL_USER}>`, // Set sender name and email address with Rori Hotel branding.
-      to: toEmail, // Set recipient email address from function parameter.
-      subject: subject, // Set email subject line from function parameter.
-      html: htmlBody // Set email body content as HTML from function parameter.
-    }); // Close sendMail configuration object.
-    console.log(`[Email Service] Successfully sent email to ${toEmail} with subject: ${subject}`); // Log successful email delivery with recipient and subject.
-  } catch (error) { // Catch block to handle any errors that occur during email sending.
-    console.error(`[Email Service] Failed to send email to ${toEmail}:`, error.message); // Log error message without throwing to prevent system crashes from email failures.
-  } // Close try-catch error handling block.
-} // Close sendEmail helper function.
+const emailConfigured = Boolean(process.env.EMAIL_USER && process.env.EMAIL_PASS);
+
+const transporter = emailConfigured
+  ? nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      },
+      connectionTimeout: EMAIL_TIMEOUT_MS,
+      greetingTimeout: EMAIL_TIMEOUT_MS,
+      socketTimeout: EMAIL_TIMEOUT_MS
+    })
+  : null;
+
+async function sendEmail(toEmail, subject, htmlBody) {
+  if (!transporter) {
+    console.warn('[Email Service] Skipped (EMAIL_USER/EMAIL_PASS not configured)');
+    return false;
+  }
+
+  try {
+    await transporter.sendMail({
+      from: `"Rori Hotel System" <${process.env.EMAIL_USER}>`,
+      to: toEmail,
+      subject,
+      html: htmlBody
+    });
+    console.log(`[Email Service] Successfully sent email to ${toEmail} with subject: ${subject}`);
+    return true;
+  } catch (error) {
+    console.error(`[Email Service] Failed to send email to ${toEmail}:`, error.message);
+    return false;
+  }
+}
 
 // Function to send welcome email to newly registered students with warm greeting and application status information.
 async function sendWelcomeEmail(toEmail, studentName) { // Define async function accepting recipient email and student name as parameters.
@@ -46,7 +63,7 @@ async function sendWelcomeEmail(toEmail, studentName) { // Define async function
       <p style="color: #999; font-size: 12px; text-align: center; margin-top: 30px;">This is an automated message from the Rori Hotel Internship Management System.</p>
     </div>
   `; // Close HTML email body template with inline CSS styling for compatibility across email clients.
-  await sendEmail(toEmail, subject, htmlBody); // Call sendEmail helper function to deliver the welcome email.
+  return sendEmail(toEmail, subject, htmlBody);
 } // Close sendWelcomeEmail function.
 
 // Function to send approval email to students whose internship applications have been accepted by HR.
@@ -100,7 +117,7 @@ async function sendNewMessageEmail(toEmail, recipientName, senderName) { // Defi
       <p style="color: #333; font-size: 16px; line-height: 1.6;">You have received a new message from <strong style="color: #C9A84C;">${senderName}</strong> in the Rori Hotel Internship Management System.</p>
       <div style="background-color: white; padding: 20px; margin: 20px 0; text-align: center; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
         <p style="color: #555; font-size: 14px; margin-bottom: 15px;">Please log in to your account to read and respond to this message.</p>
-        <a href="http://localhost:3000/login" style="display: inline-block; padding: 12px 30px; background-color: #2196F3; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">View Message</a>
+        <a href="${appUrl}/login" style="display: inline-block; padding: 12px 30px; background-color: #2196F3; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">View Message</a>
       </div>
       <p style="color: #333; font-size: 16px; line-height: 1.6;">Best regards,<br><strong style="color: #C9A84C;">Rori Hotel System</strong></p>
       <p style="color: #999; font-size: 12px; text-align: center; margin-top: 30px;">This is an automated notification from the Rori Hotel Internship Management System.</p>

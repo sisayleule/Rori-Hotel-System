@@ -4,6 +4,7 @@ import React from 'react'; // Import standard React library.
 import { BrowserRouter, Routes, Route } from 'react-router-dom'; // Import BrowserRouter, Routes and Route from react-router-dom to build navigation.
 import { AuthProvider } from './context/AuthContext'; // Import our global state session provider package.
 import ProtectedRoute from './components/ProtectedRoute'; // Import our secure role authentication route guard module.
+import ErrorBoundary from './components/ErrorBoundary'; // Import top-level render failure fallback.
 
 // Import all required page components individually.
 import Home from './pages/Home'; // Import public Home page view.
@@ -11,6 +12,7 @@ import Register from './pages/Register'; // Import public Student Registration p
 import Login from './pages/Login'; // Import public Sign-In page view.
 // REMOVED Attend import - QR attendance page completely removed in Phase 8.
 import Unauthorized from './pages/Unauthorized'; // Import access restricted response page view.
+import NotFound from './pages/NotFound'; // Import catch-all page for unknown routes.
 import Settings from './pages/Settings'; // Import Settings page for all roles account management.
 
 // Import Student dashboards pages.
@@ -36,8 +38,9 @@ import SupervisorDashboard from './pages/supervisor/SupervisorDashboard'; // Imp
 // Initialize the root App component mapping client routers.
 function App() { // Begin main App module definition block.
   return ( // Start returning the component tree structure layout.
-    <AuthProvider> { /* Wrap the entire website inside the global authentication provider context structure */ }
-      <BrowserRouter> { /* Enable seamless HTML5 browser address bar syncs and routing */ }
+    <ErrorBoundary>
+      <AuthProvider> { /* Wrap the entire website inside the global authentication provider context structure */ }
+        <BrowserRouter> { /* Enable seamless HTML5 browser address bar syncs and routing */ }
         <Routes> { /* Declare a block of selectable individual route patterns */ }
 
           { /* Public routes that anyone can access without authenticated state permissions logs. */ }
@@ -78,9 +81,12 @@ function App() { // Begin main App module definition block.
             </ProtectedRoute>
           } /> { /* Route loading supervisor settings account management page */ }
 
+          <Route path="*" element={<NotFound />} /> { /* Route loading fallback screen for unknown paths */ }
+
         </Routes> { /* Disengage selector lists router scope */ }
-      </BrowserRouter> { /* Close browser address coordinator structures */ }
-    </AuthProvider> // Close global sessions layer container.
+        </BrowserRouter> { /* Close browser address coordinator structures */ }
+      </AuthProvider>
+    </ErrorBoundary> // Close global sessions layer container.
   ); // Close overall XML components layout.
 } // Terminate App main module function block.
 

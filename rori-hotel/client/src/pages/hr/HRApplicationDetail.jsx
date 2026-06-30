@@ -6,7 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom'; // Load routing param
 // Import the core DashboardLayout packing container.
 import DashboardLayout from '../../components/DashboardLayout'; // Fetch common nested dashboard parent layout components.
 // Import Axios preconfigured network client.
-import api from '../../utils/api'; // Load unified client-side network querying driver instances.
+import api, { getApiBaseUrl } from '../../utils/api'; // Load unified client-side network querying driver instances.
 
 // Create a functional component called HRApplicationDetail.
 const HRApplicationDetail = () => { // Begin functional component declaration.
@@ -78,6 +78,47 @@ const HRApplicationDetail = () => { // Begin functional component declaration.
   const [showRejectForm, setShowRejectForm] = useState(false); // Store toggle as standard boolean false.
   // finalResult state stores the student's published result data including badges for display.
   const [finalResult, setFinalResult] = useState(null); // Initialize final result as null until fetched.
+
+  const downloadCertificate = async () => {
+    if (!student?._id) {
+      return;
+    }
+
+    const token = localStorage.getItem('roriToken');
+    if (!token) {
+      setActionError('Please log in again to download certificates.');
+      return;
+    }
+
+    try {
+      setActionError('');
+      const response = await fetch(`${getApiBaseUrl()}/results/${student._id}/certificate`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        setActionError(errorData.message || 'Failed to download certificate.');
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Certificate-${student._id}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Certificate download failed:', err);
+      setActionError('Failed to download certificate. Please try again.');
+    }
+  };
 
   // Run initial mounting hooks that fetch the candidate documents from our backend service.
   useEffect(() => { // Start page bootstrapping reactions.
@@ -919,15 +960,14 @@ const HRApplicationDetail = () => { // Begin functional component declaration.
                   </div> 
 
                   {/* Download certificate button */}
-                  <a 
-                    href={`${import.meta.env.VITE_API_URL || `${window.location.origin}/api`}/results/${student._id}/certificate`} // Construct certificate download URL.
-                    target="_blank" // Open in new tab.
-                    rel="noopener noreferrer" // Security best practice for target blank.
+                  <button
+                    type="button"
+                    onClick={downloadCertificate}
                     className="inline-flex items-center gap-2 bg-[#C9A84C] hover:bg-[#b59540] text-gray-900 text-xs font-extrabold uppercase tracking-wider px-5 py-3 rounded-xl transition-all duration-300 cursor-pointer select-none whitespace-nowrap" 
                   > 
                     <span>📥</span>
                     <span>Download Certificate</span>
-                  </a> 
+                  </button> 
                 </div> 
               </div> 
             )} 

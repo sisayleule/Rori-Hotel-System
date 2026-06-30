@@ -11,7 +11,8 @@
     "build": "npm --prefix rori-hotel/client run build",
     "preview": "node rori-hotel/server/server.js",
     "clean": "rm -rf rori-hotel/client/dist",
-    "lint": "echo 'No linter check needed for JS server'"
+    "lint": "npm --prefix rori-hotel/server run lint && npm --prefix rori-hotel/client run lint",
+    "test:smoke": "npm --prefix rori-hotel/server run test:smoke"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

@@ -119,6 +119,16 @@ router.get('/thread/:userId', protect, requireRole('hr', 'student'), async (req,
     const otherUserId = req.params.userId;
     // Ensure active user ID is extracted properly.
     const currentUserId = req.user.id || req.user.userId;
+    const otherUser = await User.findById(otherUserId).select('role');
+    if (!otherUser) {
+      return res.status(404).json({ message: "Conversation user not found" });
+    }
+    if (req.user.role === 'student' && otherUser.role !== 'hr') {
+      return res.status(403).json({ message: "Students can only open HR message threads" });
+    }
+    if (req.user.role === 'hr' && otherUser.role !== 'student') {
+      return res.status(403).json({ message: "HR can only open student message threads" });
+    }
     // Find all Messages exchanged in database between current user and selection.
     const messages = await Message.find({
       $or: [
@@ -155,16 +165,25 @@ router.post('/', protect, requireRole('hr', 'student'), async (req, res) => {
     }
     // Resolve active sender ID from request.
     const currentUserId = req.user.id || req.user.userId;
+    // Find receiver user metadata account details before creating a message.
+    const receiverUser = await User.findById(receiverId);
+    // Find sender user metadata account details.
+    const senderUser = await User.findById(currentUserId);
+    if (!receiverUser || !senderUser) {
+      return res.status(404).json({ message: "Message sender or receiver not found" });
+    }
+    if (senderUser.role === 'student' && receiverUser.role !== 'hr') {
+      return res.status(403).json({ message: "Students can only message HR" });
+    }
+    if (senderUser.role === 'hr' && receiverUser.role !== 'student') {
+      return res.status(403).json({ message: "HR can only message students" });
+    }
     // Build and insert a message instance into database storage.
     const savedMessage = await Message.create({
       senderId: currentUserId, // Bind sender identifier.
       receiverId: receiverId, // Bind receiver identifier.
       body: body.trim() // Bind text contents.
     });
-    // Find receiver user metadata account details.
-    const receiverUser = await User.findById(receiverId);
-    // Find sender user metadata account details.
-    const senderUser = await User.findById(currentUserId);
     // Create a notification for the receiver informing them they have received a new message.
     if (receiverUser && senderUser) { // Check if both users exist.
       try { // Start error handling block.
@@ -183,7 +202,11 @@ router.post('/', protect, requireRole('hr', 'student'), async (req, res) => {
     // If receiver email address is available.
     if (receiverUser && receiverUser.email && senderUser) {
       // Dispatch notifications warning about newly received inbox messages.
-      await sendNewMessageEmail(receiverUser.email, senderUser.fullName);
+      try {
+        await sendNewMessageEmail(receiverUser.email, receiverUser.fullName, senderUser.fullName);
+      } catch (emailErr) {
+        console.error('Failed to send message email notification:', emailErr.message);
+      }
     }
     // Return creation response status 201 carrying saved object.
     return res.status(201).json(savedMessage);

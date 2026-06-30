@@ -96,7 +96,7 @@ const Home = () => { // Construct the Home functional component code blocks.
 
             {/* Description Text */}
             <p className="max-w-2xl text-white/75 text-sm sm:text-base leading-relaxed font-sans font-medium text-center">
-              An elite professional platform tailored for next-generation hospitality talents. Seamlessly track vocational sessions, submit performance logs, record daily site attendance with QR codes, and coordinate career milestones with hotel resource managers.
+              An elite professional platform tailored for next-generation hospitality talents. Seamlessly track vocational sessions, submit performance logs, manage evaluations, and coordinate career milestones with hotel resource managers.
             </p>
 
             {/* Direct Centered High-Contrast Button Controls */}
@@ -177,7 +177,7 @@ const Home = () => { // Construct the Home functional component code blocks.
               Apprentice Student Management System
             </h2>
             <p className="text-white/80 text-xs sm:text-sm md:text-base font-sans font-medium leading-relaxed drop-shadow-sm">
-              An elite professional platform tailored for next-generation hospitality talents. Seamlessly track vocational sessions, submit performance logs, record daily site attendance with QR codes, and coordinate career milestones with hotel resource managers.
+              An elite professional platform tailored for next-generation hospitality talents. Seamlessly track vocational sessions, submit performance logs, manage evaluations, and coordinate career milestones with hotel resource managers.
             </p>
           </div>
 
@@ -275,7 +275,7 @@ const Home = () => { // Construct the Home functional component code blocks.
                 {/* 3D element highlights */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10"></div>
                 <img
-                  src="/hotel-photos/reception/reception_3d.jpg"
+                  src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&h=800&q=80"
                   alt="Front Office Department"
                   className="w-full h-full object-cover transition-transform duration-700 select-none group-hover:scale-110"
                   loading="lazy"
@@ -468,7 +468,7 @@ const Home = () => { // Construct the Home functional component code blocks.
             <div className="h-52 overflow-hidden relative">
               <div className="absolute inset-0 bg-black/30 group-hover:bg-transparent transition-colors duration-300 z-10"></div>
               <img
-                src="/hotel-photos/reception/reception_3d.jpg"
+                src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&h=800&q=80"
                 alt="Front Office Service"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 loading="lazy"
