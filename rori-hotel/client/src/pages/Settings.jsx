@@ -7,7 +7,7 @@ import api from '../utils/api';
 
 const Settings = () => {
   const navigate = useNavigate();
-  const { user, login, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();
   const [activeTab, setActiveTab] = useState('profile');
   
   // Profile states
@@ -95,8 +95,7 @@ const Settings = () => {
       setPhotoLocked(false);
       setShowUnlockConfirm(false);
       setSuccess('Profile photo unlocked. You can now change your photo.');
-      const token = localStorage.getItem('token');
-      login(token, { ...user, photoLocked: false });
+      updateUser({ ...user, photoLocked: false });
     } catch (err) {
       setError('Failed to unlock photo. Please try again.');
     } finally {
@@ -124,8 +123,11 @@ const Settings = () => {
         setProfilePhotoPreview('');
         setProfilePhotoFile(null);
       }
-      const token = localStorage.getItem('token');
-      login(token, response.data.user);
+      updateUser({
+        ...user,
+        ...response.data.user,
+        photoLocked: profilePhotoFile ? true : response.data.user.photoLocked ?? user.photoLocked
+      });
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update profile');
     } finally {

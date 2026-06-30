@@ -3,10 +3,12 @@
 
 import axios from 'axios'; // Import the axios library dependency to initiate HTTP requests.
 
+export const getApiBaseUrl = () => import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 // Instantiate a custom Axios instance configured with target base URLs matching endpoints environments.
 const api = axios.create({ // Call the axios.create factory mapping options.
   // Set baseURL to backend server on port 5000 not frontend port 3000 - this points to the Express API server.
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api' // Backend API server URL with fallback.
+  baseURL: getApiBaseUrl() // Backend API server URL with fallback.
 }); // Close Axios instance constructor.
 
 // Append a request interceptor to query localStorage and dynamically attach active JWT credentials headers.
@@ -47,10 +49,13 @@ api.interceptors.response.use( // Initiate response interceptors chain setup.
         return Promise.reject(networkErrorObject);
       }
 
-      // Reset and clear all active browser local storage caches to dump compromised session logs.
-      localStorage.clear(); // Wipe local cookies and cache parameters on disk.
+      // Clear only Rori auth cache instead of wiping unrelated browser storage.
+      localStorage.removeItem('roriToken'); // Remove expired JWT from disk.
+      localStorage.removeItem('roriUser'); // Remove cached user profile from disk.
       // Force immediate relocation redirects to standard sign-in index page.
-      window.location.href = '/login'; // Shift browser location window pointers.
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login'; // Shift browser location window pointers.
+      }
       // Return a pending promise to prevent downstream code from executing and producing console errors.
       return new Promise(() => {});
     } // End specific security check blocks.

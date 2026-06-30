@@ -53,8 +53,11 @@ router.get('/unread-count', protect, async (req, res) => { // Define GET route w
 // This route updates the isRead field to true for one specific notification.
 router.put('/:id/read', protect, async (req, res) => { // Define PUT route with protect middleware and ID parameter.
   try { // Start error handling block.
-    // Find the notification document by its ID from the URL parameter.
-    const notification = await Notification.findById(req.params.id); // Query by notification ID.
+    // Find the notification document by its ID and authenticated owner.
+    const notification = await Notification.findOne({
+      _id: req.params.id,
+      userId: req.user.id
+    }); // Query by notification ID and owner.
     
     // Check if notification exists in the database.
     if (!notification) { // If notification is not found.
@@ -106,8 +109,11 @@ router.put('/mark-all-read', protect, async (req, res) => { // Define PUT route 
 // This route allows users to remove individual notifications from their list.
 router.delete('/:id', protect, async (req, res) => { // Define DELETE route with protect middleware and ID parameter.
   try { // Start error handling block.
-    // Find and delete the notification document by its ID from the URL parameter.
-    const notification = await Notification.findByIdAndDelete(req.params.id); // Execute delete operation.
+    // Find and delete only notifications belonging to the authenticated user.
+    const notification = await Notification.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.user.id
+    }); // Execute delete operation with owner filter.
     
     // Check if notification existed and was deleted successfully.
     if (!notification) { // If notification was not found.

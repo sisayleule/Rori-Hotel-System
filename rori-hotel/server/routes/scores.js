@@ -13,6 +13,11 @@ const { sendResultEmail, sendCertificateReadyEmail } = require('../utils/emailSe
 const { createNotification, notifyAllWithRole } = require('../utils/notifications'); // Import notifications utilities.
 const { generateCertificate } = require('../utils/certificateGenerator'); // Import certificate PDF generator function.
 const { calculateBadges } = require('../utils/badgeService'); // Import badge calculation function.
+const logScoreDebug = (...args) => {
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(...args);
+  }
+};
 
 // Create a GET route at path /my-students accessible by all 4 supervisor roles to list assigned active students.
 router.get('/my-students', protect, requireRole('supervisor_fo', 'supervisor_hk', 'supervisor_kt', 'supervisor_fb'), async (req, res) => {
@@ -66,21 +71,15 @@ router.get('/my-students', protect, requireRole('supervisor_fo', 'supervisor_hk'
 router.post('/', protect, requireRole('supervisor_fo', 'supervisor_hk', 'supervisor_kt', 'supervisor_fb'), async (req, res) => {
   // Wrap core rating operations inside try-catch context.
   try {
-    // ===== COMPREHENSIVE DEBUG LOGGING START =====
-    console.log('========================================'); // Log separator for visibility.
-    console.log('=== SCORE SUBMIT DEBUG ==='); // Log debug header.
-    console.log('req.user:', req.user); // Log authenticated user object.
-    console.log('req.body:', req.body); // Log complete request body.
-    console.log('studentId:', req.body.studentId); // Log student ID specifically.
-    console.log('score:', req.body.score); // Log overall score.
-    console.log('technicalSkills:', req.body.technicalSkills); // Log technical skills sub-score.
-    console.log('communication:', req.body.communication); // Log communication sub-score.
-    console.log('teamwork:', req.body.teamwork); // Log teamwork sub-score.
-    console.log('professionalism:', req.body.professionalism); // Log professionalism sub-score.
-    console.log('comments:', req.body.comments); // Log comments.
-    console.log('=== END DEBUG ==='); // Log debug footer.
-    console.log('========================================'); // Log separator for visibility.
-    // ===== COMPREHENSIVE DEBUG LOGGING END =====
+    // Define supervisor role-to-department configuration settings.
+    const departmentMap = {
+      supervisor_fo: 'Front Office',
+      supervisor_hk: 'Housekeeping',
+      supervisor_kt: 'Kitchen',
+      supervisor_fb: 'F&B Service'
+    };
+    // Extract designated department from active role coordinates.
+    const assignedDept = departmentMap[req.user.role];
     
     // Decode parameters studentId, score, sub-scores, and comments directly from body parameters.
     const studentId = req.body.studentId; // Extract student ID from request body.
@@ -92,7 +91,7 @@ router.post('/', protect, requireRole('supervisor_fo', 'supervisor_hk', 'supervi
     const comments = req.body.comments; // Extract supervisor comments.
     
     // Log extracted and parsed values for debugging.
-    console.log('[Score Submission] Parsed values:', { // Log extracted values.
+    logScoreDebug('[Score Submission] Parsed values:', { // Log extracted values.
       studentId, // Student ID.
       score, // Overall score.
       technicalSkills, // Technical skills sub-score.
@@ -104,49 +103,52 @@ router.post('/', protect, requireRole('supervisor_fo', 'supervisor_hk', 'supervi
     
     // Validate that overall score is a numeric value within constraints 0 up to 100.
     if (isNaN(score) || score < 0 || score > 100) {
-      console.log('[Score Submission] Overall score validation failed:', score); // Log validation failure.
+      logScoreDebug('[Score Submission] Overall score validation failed:', score); // Log validation failure.
       // Abort return 400 bad request error status code.
       return res.status(400).json({ message: "Score must be a number between 0 and 100" });
     }
     
     // Validate all 4 sub-scores are provided and within valid range.
     if (isNaN(technicalSkills) || technicalSkills < 0 || technicalSkills > 100) { // Validate technical skills.
-      console.log('[Score Submission] Technical skills validation failed:', technicalSkills); // Log validation failure.
+      logScoreDebug('[Score Submission] Technical skills validation failed:', technicalSkills); // Log validation failure.
       return res.status(400).json({ message: "Technical skills score must be a number between 0 and 100" }); // Return error.
     } // Close validation.
     if (isNaN(communication) || communication < 0 || communication > 100) { // Validate communication.
-      console.log('[Score Submission] Communication validation failed:', communication); // Log validation failure.
+      logScoreDebug('[Score Submission] Communication validation failed:', communication); // Log validation failure.
       return res.status(400).json({ message: "Communication score must be a number between 0 and 100" }); // Return error.
     } // Close validation.
     if (isNaN(teamwork) || teamwork < 0 || teamwork > 100) { // Validate teamwork.
-      console.log('[Score Submission] Teamwork validation failed:', teamwork); // Log validation failure.
+      logScoreDebug('[Score Submission] Teamwork validation failed:', teamwork); // Log validation failure.
       return res.status(400).json({ message: "Teamwork score must be a number between 0 and 100" }); // Return error.
     } // Close validation.
     if (isNaN(professionalism) || professionalism < 0 || professionalism > 100) { // Validate professionalism.
-      console.log('[Score Submission] Professionalism validation failed:', professionalism); // Log validation failure.
+      logScoreDebug('[Score Submission] Professionalism validation failed:', professionalism); // Log validation failure.
       return res.status(400).json({ message: "Professionalism score must be a number between 0 and 100" }); // Return error.
     } // Close validation.
     
-    console.log('[Score Submission] All validations passed'); // Log validation success.
+    logScoreDebug('[Score Submission] All validations passed'); // Log validation success.
     
     // Safeguard supervisor ID resolution safely.
     const supervisorUserId = req.user.id || req.user.userId;
-    console.log('[Score Submission] Supervisor ID:', supervisorUserId); // Log supervisor ID.
+    logScoreDebug('[Score Submission] Supervisor ID:', supervisorUserId); // Log supervisor ID.
 
     // Verify if HR has approved grading for this student
-    console.log('[Score Submission] Checking student grading approval...'); // Log grading check start.
+    logScoreDebug('[Score Submission] Checking student grading approval...'); // Log grading check start.
     const studentCheck = await Student.findById(studentId);
-    console.log('[Score Submission] Student found:', studentCheck ? 'YES' : 'NO'); // Log if student found.
+    logScoreDebug('[Score Submission] Student found:', studentCheck ? 'YES' : 'NO'); // Log if student found.
     if (!studentCheck) {
-      console.log('[Score Submission] ERROR: Student not found'); // Log error.
+      logScoreDebug('[Score Submission] ERROR: Student not found'); // Log error.
       return res.status(404).json({ message: "Student record not found" });
     }
-    console.log('[Score Submission] Student isApprovedForGrading:', studentCheck.isApprovedForGrading); // Log grading approval status.
+    logScoreDebug('[Score Submission] Student isApprovedForGrading:', studentCheck.isApprovedForGrading); // Log grading approval status.
     if (!studentCheck.isApprovedForGrading) {
-      console.log('[Score Submission] ERROR: Grading locked by HR'); // Log error.
+      logScoreDebug('[Score Submission] ERROR: Grading locked by HR'); // Log error.
       return res.status(400).json({ message: "Grading is currently locked by HR for this student" });
     }
-    console.log('[Score Submission] Grading approval check passed'); // Log success.
+    if (studentCheck.currentDepartment !== assignedDept) {
+      return res.status(403).json({ message: "You can only submit scores for students in your current department" });
+    }
+    logScoreDebug('[Score Submission] Grading approval check passed'); // Log success.
 
     // Check if score record already exists between this candidate and supervisor.
     const existingScoreLog = await SupervisorScore.findOne({
@@ -158,15 +160,6 @@ router.post('/', protect, requireRole('supervisor_fo', 'supervisor_hk', 'supervi
       // Respond 400 error statement explaining locked state.
       return res.status(400).json({ message: "score already submitted and locked" });
     }
-    // Define supervisor role-to-department configuration settings.
-    const departmentMap = {
-      supervisor_fo: 'Front Office',
-      supervisor_hk: 'Housekeeping',
-      supervisor_kt: 'Kitchen',
-      supervisor_fb: 'F&B Service'
-    };
-    // Extract designated department from active role coordinates.
-    const assignedDept = departmentMap[req.user.role];
     // Declare variable tracking newly built score records.
     let savedScore;
     // If a draft record was found update parameters on it.

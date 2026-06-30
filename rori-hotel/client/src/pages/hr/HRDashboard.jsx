@@ -103,16 +103,16 @@ const HRDashboard = () => { // Begin component definitions.
               Go to Applications {/* Caption label pointer. */}
             </Link> {/* Close redirect link. */}
           </div> {/* Close Card 1 block. */}
-          {/* Card 2 — Manage Attendance. */}
+          {/* Card 2 — Evaluation Scores. */}
           <div className="bg-white rounded-xl shadow-xs border border-gray-150 p-6 flex flex-col justify-between hover:border-[#C9A84C]/50 transition-colors"> {/* Card shape. */}
             <div className="mb-4"> {/* Spacing. */}
-              <span className="text-xl mb-2 block">🔔</span> {/* Icon designator emoji. */}
-              <h3 className="text-sm font-black text-gray-800 uppercase tracking-wider mb-2">Manage Attendance</h3> {/* Card Title. */}
-              <p className="text-xs text-gray-400 font-semibold mb-6">Track trainee clock-in clocks and fix discrepancies.</p> {/* Card subtext description guidelines. */}
+              <span className="text-xl mb-2 block">🏅</span> {/* Icon designator emoji. */}
+              <h3 className="text-sm font-black text-gray-800 uppercase tracking-wider mb-2">Evaluation Scores</h3> {/* Card Title. */}
+              <p className="text-xs text-gray-400 font-semibold mb-6">Review trainee performance scores and published results.</p> {/* Card subtext description guidelines. */}
             </div> {/* Spacing wrapper close. */}
-            {/* Link to /hr/attendance styled as a small gold button with hover effects. */}
-            <Link to="/hr/attendance" className="inline-block bg-[#C9A84C] hover:bg-[#B7963A] text-white text-[10px] font-extrabold uppercase tracking-widest text-center px-4 py-2 rounded-lg transition-colors border-0 shrink-0 cursor-pointer"> {/* Link. */}
-              Go to Attendance {/* Caption label pointer. */}
+            {/* Link to /hr/scores styled as a small gold button with hover effects. */}
+            <Link to="/hr/scores" className="inline-block bg-[#C9A84C] hover:bg-[#B7963A] text-white text-[10px] font-extrabold uppercase tracking-widest text-center px-4 py-2 rounded-lg transition-colors border-0 shrink-0 cursor-pointer"> {/* Link. */}
+              Go to Scores {/* Caption label pointer. */}
             </Link> {/* Close link. */}
           </div> {/* Close Card 2 block. */}
           {/* Card 3 — Intern Statistics. */}

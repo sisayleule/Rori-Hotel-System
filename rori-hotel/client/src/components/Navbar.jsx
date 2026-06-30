@@ -95,13 +95,10 @@ const Navbar = () => { // Construct the Navbar functional component code block.
           {/* On the right side create a div with flex display and a gap between items. */}
           <div className="flex items-center gap-4 sm:gap-6"> {/* Encompass standard controls panels within custom grid spacings layouts */}
             
-            {/* Main Center-Right Nav Options: Home, QR Attendance, Contacts */}
+            {/* Main Center-Right Nav Options: Home and Contacts */}
             <div className="hidden lg:flex items-center gap-6">
               <Link to="/" className="text-white/80 hover:text-gold text-xs font-bold uppercase tracking-widest transition-all duration-300">
                 Home
-              </Link>
-              <Link to="/attend" className="text-white/80 hover:text-gold text-xs font-bold uppercase tracking-widest transition-all duration-300">
-                QR Attendance
               </Link>
               <button 
                 onClick={handleContactClick}
@@ -162,13 +159,6 @@ const Navbar = () => { // Construct the Navbar functional component code block.
               className="text-white/90 hover:text-gold text-xs font-bold uppercase tracking-widest transition-colors duration-300 py-1.5 border-b border-white/5"
             >
               Home
-            </Link>
-            <Link 
-              to="/attend" 
-              onClick={() => setIsMobileMenuOpen(false)} 
-              className="text-white/90 hover:text-gold text-xs font-bold uppercase tracking-widest transition-colors duration-300 py-1.5 border-b border-white/5"
-            >
-              QR Attendance
             </Link>
             <button 
               onClick={handleContactClick} 

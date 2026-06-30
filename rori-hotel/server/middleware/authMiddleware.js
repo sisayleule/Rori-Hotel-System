@@ -1,6 +1,7 @@
 // This middleware file intercepts network client transactions to check and verify security JSON Web Tokens (JWT).
 // It verifies that a student or staff member is logged in and authorized before granting route access.
 const jwt = require('jsonwebtoken'); // Import jsonwebtoken library tool to parse and decode signature tokens.
+const { getRequiredEnv } = require('../utils/env'); // Load required env helper.
 
 // Define our standard protect authentication router interceptor middleware function.
 const protect = (req, res, next) => { // Declare middleware function structure.
@@ -19,7 +20,7 @@ const protect = (req, res, next) => { // Declare middleware function structure.
   // Process token evaluation matching using secure crypt verification loops.
   try { // Start error tracking context block.
     // Decrypt and confirm token properties validity withprocess local secret environment signature keys.
-    const decodedTokenDataProperties = jwt.verify(requestTokenString, process.env.JWT_SECRET || 'fallback-secret-key-1234'); // Decode payload credentials.
+    const decodedTokenDataProperties = jwt.verify(requestTokenString, getRequiredEnv('JWT_SECRET')); // Decode payload credentials.
     // Bind token data parameters to req.user containing authenticated identification.
     req.user = decodedTokenDataProperties; // Register payload with server context arrays.
     if (req.user && req.user.userId && !req.user.id) {
